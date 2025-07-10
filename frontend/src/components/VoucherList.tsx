@@ -38,7 +38,16 @@ export function VoucherList() {
         return res.json();
       })
       .then((data) => {
-        setVouchers(data);
+        // Map snake_case to camelCase for all relevant fields
+        setVouchers(
+          data.map((v: any) => ({
+            ...v,
+            dataLimit: v.data_limit ?? v.dataLimit,
+            createdAt: v.created_at ?? v.createdAt,
+            usedAt: v.used_at ?? v.usedAt,
+            expiresAt: v.expires_at ?? v.expiresAt,
+          }))
+        );
         setLoading(false);
       })
       .catch((err) => {
