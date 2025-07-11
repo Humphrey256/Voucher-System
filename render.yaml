@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: muroni-backend
+    env: python
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn canalbox_backend.wsgi:application
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com
+      - key: DATABASE_URL
+        fromDatabase:
+          name: muroni-db
+          property: connectionString
+    plan: free
+    rootDir: backend
+    autoDeploy: true
+    healthCheckPath: /admin/login/
+
+  - type: static
+    name: muroni-frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    rootDir: frontend
+    autoDeploy: true
+
+databases:
+  - name: muroni-db
+    plan: free
+    databaseName: muroni
+    user: muroni 

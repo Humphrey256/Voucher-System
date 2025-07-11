@@ -89,7 +89,8 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
     const newStatus = status === "active" ? "disabled" : "active";
     setLoading(true);
     try {
-      const res = await fetch(`/api/vouchers/${voucher.id}/`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${API_URL}/api/vouchers/${voucher.id}/`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -114,7 +115,8 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
   const handleDelete = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/vouchers/${voucher.id}/`, {
+      const API_URL = import.meta.env.VITE_API_URL;
+      const res = await fetch(`${API_URL}/api/vouchers/${voucher.id}/`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete voucher");
@@ -182,7 +184,7 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Calendar className="w-4 h-4" />
-              <span>Created: {formatDate(voucher.created_at || voucher.createdAt)}</span>
+              <span>Created: {formatDate(voucher.createdAt)}</span>
             </div>
             {voucher.usedAt && (
               <div className="flex items-center gap-2 text-sm text-gray-600">

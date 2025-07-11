@@ -10,15 +10,17 @@ export function VoucherDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     setLoading(true);
     setError(null);
     Promise.all([
-      fetch("/api/vouchers/stats/").then((res) => {
+      fetch(`${API_URL}/api/vouchers/stats/`).then((res) => {
         if (!res.ok) throw new Error("Failed to fetch stats");
         return res.json();
       }),
-      fetch("/api/vouchers/activity/").then((res) => {
+      fetch(`${API_URL}/api/vouchers/activity/`).then((res) => {
         if (!res.ok) throw new Error("Failed to fetch activity");
         return res.json();
       })

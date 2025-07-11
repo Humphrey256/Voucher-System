@@ -28,11 +28,12 @@ export function VoucherList() {
   const voucherGridRef = useRef<HTMLDivElement>(null);
   const [printCodesOnly, setPrintCodesOnly] = useState(false);
   const codesPrintRef = useRef<HTMLDivElement>(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch("/api/vouchers/")
+    fetch(`${API_URL}/api/vouchers/`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch vouchers");
         return res.json();
@@ -63,7 +64,7 @@ export function VoucherList() {
   });
 
   const handleExport = () => {
-    fetch('/api/vouchers/export/')
+    fetch(`${API_URL}/api/vouchers/export/`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to export vouchers');
         return res.blob();
