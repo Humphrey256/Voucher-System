@@ -1,10 +1,25 @@
 
 import { useState, useEffect } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { VoucherDashboard } from "@/components/VoucherDashboard";
 import { VoucherGenerator } from "@/components/VoucherGenerator";
 import { VoucherList } from "@/components/VoucherList";
+
+function MobileSidebarToggle() {
+  const { isMobile, toggleSidebar } = useSidebar();
+  if (!isMobile) return null;
+  return (
+    <button
+      onClick={toggleSidebar}
+      className="inline-flex items-center justify-center rounded-md p-2 text-blue-600 bg-white shadow hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      aria-label="Open sidebar"
+      style={{ position: 'absolute', right: 0, top: 16, zIndex: 50 }}
+    >
+      <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu w-6 h-6"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+    </button>
+  );
+}
 
 const Index = () => {
   const [activeView, setActiveViewState] = useState(() => {
@@ -45,7 +60,8 @@ const Index = () => {
         <AppSidebar activeView={activeView} setActiveView={setActiveView} />
         <main className="flex-1 p-6">
           <div className="max-w-7xl mx-auto">
-            <header className="mb-8">
+            <header className="mb-8 relative">
+              <MobileSidebarToggle />
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
                 MURONI WiFi Voucher System
               </h1>
