@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Download, MoreHorizontal } from "lucide-react";
 import { VoucherCard } from "@/components/VoucherCard";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface Voucher {
   id: string;
@@ -29,6 +30,27 @@ export function VoucherList() {
   const [printCodesOnly, setPrintCodesOnly] = useState(false);
   const codesPrintRef = useRef<HTMLDivElement>(null);
   const API_URL = import.meta.env.VITE_API_URL;
+  const [selectedVouchers, setSelectedVouchers] = useState<string[]>([]);
+  const selectAllRef = useRef<HTMLInputElement>(null);
+
+  const filteredVouchers = vouchers.filter((voucher) => {
+    const matchesSearch = voucher.code.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = filterStatus === "all" || voucher.status === filterStatus;
+    return matchesSearch && matchesFilter;
+  });
+
+  const allSelected =
+    filteredVouchers.length > 0 &&
+    selectedVouchers.length === filteredVouchers.length;
+  const someSelected =
+    selectedVouchers.length > 0 &&
+    selectedVouchers.length < filteredVouchers.length;
+
+  useEffect(() => {
+    if (selectAllRef.current) {
+      selectAllRef.current.indeterminate = someSelected;
+    }
+  }, [someSelected]);
 
   useEffect(() => {
     setLoading(true);
@@ -57,11 +79,19 @@ export function VoucherList() {
       });
   }, []);
 
-  const filteredVouchers = vouchers.filter((voucher) => {
-    const matchesSearch = voucher.code.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = filterStatus === "all" || voucher.status === filterStatus;
-    return matchesSearch && matchesFilter;
-  });
+  const handleSelectVoucher = (id: string, checked: boolean) => {
+    setSelectedVouchers((prev) =>
+      checked ? [...prev, id] : prev.filter((vid) => vid !== id)
+    );
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedVouchers(filteredVouchers.map((v) => v.id));
+    } else {
+      setSelectedVouchers([]);
+    }
+  };
 
   const handleExport = () => {
     fetch(`${API_URL}/api/vouchers/export/`)
@@ -111,7 +141,14 @@ export function VoucherList() {
           <CardTitle>Voucher Management</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="flex items-center mr-4">
+              <Checkbox
+                checked={allSelected ? true : someSelected ? 'indeterminate' : false}
+                onCheckedChange={handleSelectAll}
+                aria-label="Select all vouchers"
+              />
+            </div>
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
               <Input
@@ -154,8 +191,38 @@ export function VoucherList() {
       {!loading && !error && (
         <div ref={voucherGridRef} className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredVouchers.map((voucher) => (
-            <VoucherCard key={voucher.id} voucher={voucher} />
+            <div key={voucher.id} className="relative">
+              <div className="absolute left-2 top-2 z-10">
+                <Checkbox
+                  checked={selectedVouchers.includes(voucher.id)}
+                  onCheckedChange={(checked) => handleSelectVoucher(voucher.id, !!checked)}
+                  aria-label={`Select voucher ${voucher.code}`}
+                />
+              </div>
+              <VoucherCard voucher={voucher} />
+            </div>
           ))}
+        </div>
+      )}
+      {/* Bulk Action Bar */}
+      {selectedVouchers.length > 0 && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white border rounded-lg shadow-lg px-6 py-3 flex gap-4 items-center z-50">
+          <span>{selectedVouchers.length} selected</span>
+          <Button
+            variant="destructive"
+            onClick={() => {
+              // Example: bulk delete
+              // You can implement a confirmation dialog here
+              selectedVouchers.forEach(async (id) => {
+                const API_URL = import.meta.env.VITE_API_URL;
+                await fetch(`${API_URL}/api/vouchers/${id}/`, { method: "DELETE" });
+              });
+              setSelectedVouchers([]);
+              window.location.reload();
+            }}
+          >
+            Delete Selected
+          </Button>
         </div>
       )}
 
