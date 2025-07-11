@@ -78,3 +78,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings for local development
 CORS_ALLOW_ALL_ORIGINS = True 
+# CORS settings for production
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    "https://voucher-system-cr6h.onrender.com",
+] 
