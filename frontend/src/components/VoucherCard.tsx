@@ -7,7 +7,7 @@ import { Calendar, Database, Clock, Copy, MoreHorizontal } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useEffect } from "react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 interface Voucher {
   id: string;
@@ -229,7 +229,9 @@ export function VoucherCard({ voucher }: VoucherCardProps) {
       <Dialog open={showDelete} onOpenChange={setShowDelete}>
         <DialogContent>
           <DialogTitle>Delete Voucher</DialogTitle>
-          <div>Are you sure you want to delete voucher <b>{voucher.code}</b>?</div>
+          <DialogDescription>
+            Are you sure you want to delete voucher <b>{voucher.code}</b>?
+          </DialogDescription>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowDelete(false)} disabled={loading}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete} disabled={loading}>Delete</Button>
