@@ -210,13 +210,13 @@ export function VoucherList() {
           <span>{selectedVouchers.length} selected</span>
           <Button
             variant="destructive"
-            onClick={() => {
-              // Example: bulk delete
-              // You can implement a confirmation dialog here
-              selectedVouchers.forEach(async (id) => {
-                const API_URL = import.meta.env.VITE_API_URL;
-                await fetch(`${API_URL}/api/vouchers/${id}/`, { method: "DELETE" });
-              });
+            onClick={async () => {
+              const API_URL = import.meta.env.VITE_API_URL;
+              await Promise.all(
+                selectedVouchers.map((id) =>
+                  fetch(`${API_URL}/api/vouchers/${id}/`, { method: "DELETE" })
+                )
+              );
               setSelectedVouchers([]);
               window.location.reload();
             }}
