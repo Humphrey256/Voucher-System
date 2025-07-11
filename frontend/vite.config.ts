@@ -11,6 +11,9 @@ export default defineConfig(({ mode }) => ({
     proxy: {
       "/api": "http://localhost:8000",
     },
+    allowedHosts: [
+      "voucher-system-ldsa.onrender.com"
+    ]
   },
   plugins: [
     react(),
